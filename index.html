@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Сайт словешанских психопатов</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a0000, #730000);
+      color: #f5f5f5;
+      margin: 0;
+      min-height: 100vh;
+      padding: 40px 20px;
+      text-align: center;
+      overflow: auto;
+      position: relative;
+      display: block;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      text-shadow: 2px 2px 8px #330000;
+      margin-bottom: 0.2em;
+      letter-spacing: 3px;
+    }
+
+    /* Контейнер гамбургера + меню */
+    .menu-wrapper {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+      display: inline-block;
+    }
+
+    /* Гамбургер */
+    .hamburger {
+      width: 35px;
+      height: 30px;
+      position: relative;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .hamburger div {
+      position: absolute;
+      height: 4px;
+      background: #f5f5f5;
+      width: 100%;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    .hamburger div:nth-child(1) {
+      top: 0;
+    }
+
+    .hamburger div:nth-child(2) {
+      top: 13px;
+    }
+
+    .hamburger div:nth-child(3) {
+      bottom: 0;
+    }
+
+    /* Меню */
+    .menu {
+      position: absolute;
+      top: 35px;
+      left: 0;
+      background: rgba(0, 0, 0, 0.6); /* Зроблено прозорішим */
+      border-radius: 0 0 15px 15px;
+      padding: 10px 0;
+      display: none;
+      flex-direction: column;
+      min-width: 160px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+      user-select: none;
+    }
+
+    .menu a {
+      color: #f5f5f5;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-weight: 600;
+      border-radius: 0;
+      transition: background-color 0.3s ease;
+      text-align: left;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .menu a:hover {
+      background-color: #f5f5f5;
+      color: #730000;
+    }
+
+    /* Фото трохи більше */
+    .main-photo {
+      width: 60%;
+      max-width: 500px;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(255, 0, 0, 0.6);
+      border: 3px solid #730000;
+      margin-top: 20px;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      color: #aaa;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-wrapper" id="menu-wrapper">
+    <div class="hamburger" id="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <nav class="menu" id="menu">
+      <a href="index.html">Головна</a>
+      <a href="about.html">Про нас</a>
+      <a href="contacts.html">Контакти</a>
+      <a href="gallery.html">Галерея</a>
+    </nav>
+  </div>
+
+  <h1>Головна</h1>
+  <h2>СПА-Словешанские Психопати Алкаши</h2>
+  <p>Сайт про нашу четверку марвел.</p>
+
+  <h2>Салам Алейкум</h2>
+  <p>
+    Ми 4 далбайоба які бухають всегда і творять хуйню P.S на фото ниже - только троє,
+    четвертий в Кийові був.
+  </p>
+  <img
+    src="c:\Users\Нікітка\Downloads\photo_6_2025-08-11_18-49-25.jpg"
+    alt="Троє з нас"
+    class="main-photo"
+  />
+  <footer>&copy; 2025 Словешанские психопаты</footer>
+
+  <script>
+    const menuWrapper = document.getElementById('menu-wrapper');
+    const menu = document.getElementById('menu');
+
+    let timeoutId;
+
+    menuWrapper.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      menu.style.display = 'flex';
+    });
+
+    menuWrapper.addEventListener('mouseleave', () => {
+      timeoutId = setTimeout(() => {
+        menu.style.display = 'none';
+      }, 300);
+    });
+  </script>
+</body>
+</html>
