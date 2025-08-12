@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Галерея</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a0000, #730000);
+      color: #f5f5f5;
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Розмивання фону при відкритті модалки */
+    body.modal-open > *:not(.modal) {
+      filter: blur(6px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Виняток для модалки, щоб була кликабельна */
+    .modal {
+      pointer-events: auto;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      text-shadow: 2px 2px 8px #330000;
+      margin-bottom: 0.5em;
+      letter-spacing: 3px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    figure {
+      margin: 0;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 15px;
+      padding: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+      color: #f5f5f5;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    figure:hover {
+      transform: scale(1.05);
+    }
+
+    figure img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    figcaption {
+      font-size: 1rem;
+      user-select: none;
+    }
+
+    /* Модальне вікно */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .modal.active {
+      display: flex;
+    }
+
+    .modal img {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: 10px;
+      box-shadow: 0 0 20px black;
+      user-select: none;
+    }
+
+    .modal-caption {
+      margin-top: 15px;
+      color: #ff9a9a;
+      font-size: 1.2rem;
+      text-shadow: 1px 1px 4px #440000;
+      max-width: 90vw;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Хрестик закриття */
+    .modal-close {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      font-size: 3rem;
+      color: #ff9a9a;
+      cursor: pointer;
+      user-select: none;
+      z-index: 10000;
+      transition: color 0.3s ease;
+    }
+    .modal-close:hover {
+      color: #ff4c4c;
+    }
+
+    /* Бургер меню */
+    .menu-wrapper {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 10001; /* вище за модалку */
+      display: inline-block;
+    }
+
+    .hamburger {
+      width: 35px;
+      height: 30px;
+      position: relative;
+      cursor: pointer;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 5px 0;
+      user-select: none;
+    }
+
+    .hamburger div {
+      height: 4px;
+      background: #f5f5f5;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    /* Меню */
+    .menu {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 0 0 15px 15px;
+      padding: 10px 0;
+      display: none;
+      flex-direction: column;
+      min-width: 160px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+      user-select: none;
+    }
+
+    .menu a {
+      color: #f5f5f5;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-weight: 600;
+      border-radius: 0;
+      transition: background-color 0.3s ease;
+      text-align: left;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .menu a:hover {
+      background-color: #f5f5f5;
+      color: #730000;
+    }
+
+    /* Відкриваємо меню при наведенні */
+    .menu-wrapper:hover .menu {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-wrapper" id="menu-wrapper">
+    <div class="hamburger" id="hamburger" aria-label="Відкрити меню" role="button" tabindex="0">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <nav class="menu" id="menu" aria-label="Головне меню">
+      <a href="index.html">Головна</a>
+      <a href="about.html">Про нас</a>
+      <a href="contacts.html">Контакти</a>
+      <a href="gallery.html">Галерея</a>
+    </nav>
+  </div>
+
+  <h1>Галерея</h1>
+
+  <div class="gallery-grid">
+    <figure>
+      <img src="фотки/photo_31_2025-08-12_02-26-58.jpg" alt="Фото 1" />
+      <figcaption>Іващиха Валька</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_34_2025-08-12_02-26-58.jpg" alt="Фото 2" />
+      <figcaption>Уроки прогулюють тварі</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_43_2025-08-12_02-26-58.jpg" alt="Фото 3" />
+      <figcaption>ААААА УБІЛІ!!</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_40_2025-08-12_02-26-58.jpg" alt="Фото 4" />
+      <figcaption>Максім і жена</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_30_2025-08-12_02-26-58.jpg" alt="Фото 5" />
+      <figcaption>ХАХАХАХАХАХАХАХАХАХАХАХ</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_54_2025-08-12_02-26-58.jpg" alt="Фото 6" />
+      <figcaption>урааааа ЯКАСЬ ХУЙНЯ ВИПАЛА</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_28_2025-08-12_02-26-58.jpg" alt="Фото 7" />
+      <figcaption>1488 одобряєм</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_46_2025-08-12_02-26-58.jpg" alt="Фото 8" />
+      <figcaption>пьяниє мираге</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_26_2025-08-12_02-26-58.jpg" alt="Фото 9" />
+      <figcaption>ееехххх максімка</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_25_2025-08-12_02-26-58.jpg" alt="Фото 10" />
+      <figcaption>школу закончілі уро</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_38_2025-08-12_02-26-58.jpg" alt="Фото 11" />
+      <figcaption>....</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_23_2025-08-12_02-26-58.jpg" alt="Фото 12" />
+      <figcaption>корпорация монстров</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_22_2025-08-12_02-26-58.jpg" alt="Фото 13" />
+      <figcaption>скример</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_21_2025-08-12_02-26-58.jpg" alt="Фото 14" />
+      <figcaption>репетіція</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_20_2025-08-12_02-26-58.jpg" alt="Фото 15" />
+      <figcaption>крутий чувак</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_19_2025-08-12_02-26-58.jpg" alt="Фото 16" />
+      <figcaption>фемілі</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_18_2025-08-12_02-26-58.jpg" alt="Фото 17" />
+      <figcaption>Марвел</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_35_2025-08-12_02-26-58.jpg" alt="Фото 18" />
+      <figcaption>ЛЕГЕНДА</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_16_2025-08-12_02-26-58.jpg" alt="Фото 19" />
+      <figcaption>ХАХАХАХАХАХАХАХАХ самий лучший день</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_47_2025-08-12_02-26-58.jpg" alt="Фото 20" />
+      <figcaption>Фото с легендой</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_15_2025-08-12_02-26-58.jpg" alt="Фото 21" />
+      <figcaption>вмерла людина</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_52_2025-08-12_02-26-58.jpg" alt="Фото 22" />
+      <figcaption>скример Х2</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_12_2025-08-12_02-26-58.jpg" alt="Фото 23" />
+      <figcaption>Крутий ЧУВАААААААААААААК</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_11_2025-08-12_02-26-58.jpg" alt="Фото 24" />
+      <figcaption>Супергерои</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_49_2025-08-12_02-26-58.jpg" alt="Фото 25" />
+      <figcaption>Тудо</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_44_2025-08-12_02-26-58.jpg" alt="Фото 26" />
+      <figcaption>Маньяк насильник секс</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_8_2025-08-11_18-49-25.jpg" alt="Фото 27" />
+      <figcaption>Беня</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_48_2025-08-12_02-26-58.jpg" alt="Фото 28" />
+      <figcaption>сексі хлопчики</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_6_2025-08-12_02-26-58.jpg" alt="Фото 29" />
+      <figcaption>Перед отьездом в Хмель</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_10_2025-08-12_02-26-58.jpg" alt="Фото 30" />
+      <figcaption>МЕМОСІК</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_3_2025-08-11_18-49-25.jpg" alt="Фото 31" />
+      <figcaption>самий лучший день рил</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_9_2025-08-12_02-26-58.jpg" alt="Фото 32" />
+      <figcaption>фу бля наригали</figcaption>
+    </figure>
+    <figure>
+      <img src="фотки/photo_1_2025-08-11_18-49-25.jpg" alt="Фото 33" />
+      <figcaption>фу бля</figcaption>
+    </figure>
+  </div>
+
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <span class="modal-close" id="modal-close" aria-label="Закрити">&times;</span>
+    <img id="modal-img" src="" alt="" />
+    <div id="modal-caption" class="modal-caption"></div>
+  </div>
+
+  <script>
+    // Галерея і модалка
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalCaption = document.getElementById('modal-caption');
+    const modalClose = document.getElementById('modal-close');
+    const body = document.body;
+
+    document.querySelectorAll('.gallery-grid figure').forEach(figure => {
+      figure.addEventListener('click', () => {
+        const img = figure.querySelector('img');
+        const caption = figure.querySelector('figcaption').textContent;
+
+        modalImg.src = img.src;
+        modalImg.alt = img.alt;
+        modalCaption.textContent = caption;
+
+        modal.classList.add('active');
+        body.classList.add('modal-open');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove('active');
+      body.classList.remove('modal-open');
+      modal.setAttribute('aria-hidden', 'true');
+      modalImg.src = '';
+      modalImg.alt = '';
+      modalCaption.textContent = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
